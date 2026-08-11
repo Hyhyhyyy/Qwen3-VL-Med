@@ -1,0 +1,4 @@
+# Optional metric-only dependencies. Do not upgrade torch or transformers.
+sacrebleu==2.5.1
+rouge-score==0.1.2
+bert-score==0.3.13

@@ -1,0 +1,17 @@
+name: privacy-and-syntax
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Privacy gate
+        shell: pwsh
+        run: ./tools/privacy_audit.ps1
+      - name: Python syntax
+        shell: pwsh
+        run: python -m compileall -q code experiments

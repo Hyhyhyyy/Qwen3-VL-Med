@@ -1,0 +1,20 @@
+[
+  {
+    "synthetic": true,
+    "case_id": "synthetic-001",
+    "images": ["/path/to/synthetic/image-001.png"],
+    "messages": [
+      {"role": "user", "content": "<image>Describe the synthetic teaching image."},
+      {"role": "assistant", "content": "Synthetic example only: mild portal inflammation. Teaching label: synthetic category A."}
+    ]
+  },
+  {
+    "synthetic": true,
+    "case_id": "synthetic-002",
+    "images": ["/path/to/synthetic/image-002.png"],
+    "messages": [
+      {"role": "user", "content": "<image>Describe the synthetic teaching image."},
+      {"role": "assistant", "content": "Synthetic example only: macrovesicular steatosis. Teaching label: synthetic category B."}
+    ]
+  }
+]
