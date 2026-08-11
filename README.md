@@ -1,3 +1,13 @@
+<p align="center">
+  <img src="banner.svg" alt="Qwen3-VL-Med hero banner">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/model-Qwen3--VL-00A3A3" alt="model">
+  <img src="https://img.shields.io/badge/privacy--audit-passed-2ECC71" alt="privacy">
+  <img src="https://img.shields.io/badge/domain-medical%20VLM-4F86F7" alt="domain">
+</p>
+
 # Qwen3-VL-Med
 
 面向 Qwen3-VL 医疗领域微调研究的代码级公开版本，已执行隐私筛查与内部数据隔离。
