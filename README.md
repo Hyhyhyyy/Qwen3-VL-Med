@@ -93,3 +93,19 @@ git diff --exit-code -- RELEASE_SHA256.txt
 ## 临床使用警告
 
 本仓库仅用于研究与工程复现，不是医疗器械。公开结论不能证明模型的临床安全性或诊断性能。任何临床使用前均须经过独立病理专家复核、机构审批、适用场景验证和持续监测。
+
+---
+
+## 本批新增（2026-08-14，已脱敏）
+
+从本地训练成果中整理并**脱敏**后补充的可复用工程资产（不含任何权重、训练数据、逐样本结果、内部主机名或凭据）：
+
+- `configs/lora/`：LoRA 微调基础配置与高显存变体。
+- `configs/full_sft/qwen3vl_full_sft.yaml` 与 `qwen3vl_a100_full_sft.yaml.in`：全量微调基础配置与 A100 模板（含 `{{TRAIN_ROOT}}` 等占位符）。
+- `scripts/`：一键安装/下载/训练、数据集校验、批量评估、导出清单、NCCL 自检、远端诊断与可复现训练工作流脚本。
+- `tools/rebuild_from_initial.ps1`：从原始标注重建训练/测试 JSON 的脱敏转换脚本。
+- `docs/ENVIRONMENT.md`、`docs/environment_config.csv`、`docs/environment_snapshot.md`：环境与硬件快照（已隐去云厂商名）。
+- `docs/metrics/`：指标定义、冻结消融拆分空表模板与分析说明。
+- `docs/CONFIG_PREFLIGHT.md`：各 YAML / DeepSpeed JSON 的**预制要求**与训练前检查清单。
+
+> 所有路径均为占位符；训练/数据/凭据均在仓库之外管理，详见 `SECURITY.md` 与 `docs/CONFIG_PREFLIGHT.md`。
