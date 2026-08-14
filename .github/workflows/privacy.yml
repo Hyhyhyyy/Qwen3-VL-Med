@@ -15,3 +15,13 @@ jobs:
       - name: Python syntax
         shell: pwsh
         run: python -m compileall -q code experiments
+      - name: Unit tests
+        shell: pwsh
+        run: |
+          python code/metric_eval/tests/test_metric_rules.py
+          python code/one_to_one_eval/test_1v1_eval.py
+      - name: Release hash integrity
+        shell: pwsh
+        run: |
+          ./tools/update_release_hashes.ps1
+          git diff --exit-code -- RELEASE_SHA256.txt
