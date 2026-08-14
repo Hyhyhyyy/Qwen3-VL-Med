@@ -5,7 +5,7 @@ $manifest = Join-Path $repoRoot 'RELEASE_SHA256.txt'
 
 Push-Location $repoRoot
 try {
-    $files = @(& git ls-files --cached --others --exclude-standard | Where-Object { $_ -and $_ -ne 'RELEASE_SHA256.txt' } | Sort-Object -Unique)
+    $files = @(& git ls-files --cached --others --exclude-standard | Where-Object { $_ -and $_ -ne 'RELEASE_SHA256.txt' })
     if ($LASTEXITCODE -ne 0) { throw 'git ls-files failed' }
 
     $lines = foreach ($relative in $files) {
