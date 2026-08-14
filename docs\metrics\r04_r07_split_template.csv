@@ -1,0 +1,13 @@
+run,status,domain,endpoint,n,estimate,ci95_low,ci95_high,paired_contrast,paired_delta,paired_ci95_low,paired_ci95_high,p_value,interpretation
+R04,complete,diagnosis,diagnosis_concept_f1,327,,,,baseline,,,,,
+R04,complete,morphology,clinical_fact_f1,327,,,,baseline,,,,,
+R04,complete,morphology,key_fact_recall,327,,,,baseline,,,,,
+R05,complete,diagnosis,diagnosis_concept_f1,327,,,,R05-R04,,,,,
+R05,complete,morphology,clinical_fact_f1,327,,,,R05-R04,,,,,
+R05,complete,morphology,key_fact_recall,327,,,,R05-R04,,,,,
+R06,complete,diagnosis,diagnosis_concept_f1,327,,,,R06-R04,,,,,
+R06,complete,morphology,clinical_fact_f1,327,,,,R06-R04,,,,,
+R06,complete,morphology,key_fact_recall,327,,,,R06-R04,,,,,
+R07,pending,diagnosis,diagnosis_concept_f1,,,,,R07-R04,,,,,
+R07,pending,morphology,clinical_fact_f1,,,,,R07-R04,,,,,
+R07,pending,morphology,key_fact_recall,,,,,R07-R04,,,,,
