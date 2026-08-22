@@ -15,7 +15,7 @@ Qwen3-VL 医疗视觉语言模型微调与评测的公开工程实践仓库。�
 
 维护者：**郝奕（Hyhyhyyy）**
 
-> **最近更新（2026-08-14，已脱敏）：** 新增可复用的 `configs/lora/`、`scripts/`、`docs/` 与隐私/完整性工具，详见文末「本批新增」一节。
+> **最近更新（2026-08-22，已脱敏）：** 补充 R01–R14 实验台账、统一 13 项评测协议、第三阶段方向性结论、全历史隐私扫描和仓库外 AES-256 私有归档工具；同时修复了会导致 Windows 无法检出的反斜杠路径。
 
 ## 工程成果概览
 
@@ -26,7 +26,7 @@ Qwen3-VL 医疗视觉语言模型微调与评测的公开工程实践仓库。�
 - 记录并处理了注意力实现兼容、显存约束、分布式训练、checkpoint保存与重载等工程问题。
 - 为公开发布设置了文件类型、文件大小、敏感模式、语法、测试与 SHA-256 完整性门禁。
 
-公开结论及证据边界见 [公开成果与经验](docs/PUBLIC_RESULTS.md)，实验路线见 [实验矩阵](docs/EXPERIMENT_MATRIX.md)，指标定义和临床限制见 [指标与证据等级](docs/METRIC_EVIDENCE.md)。
+公开结论及证据边界见 [公开成果与经验](docs/PUBLIC_RESULTS.md)，逐 Run 状态见 [R01–R14 实验台账](docs/RUN_LEDGER.md)，统一协议见 [13 项评测机制](docs/STANDARD_EVALUATION.md)，项目概述见 [公开表达版总结](docs/PROJECT_SUMMARY.md)。
 
 ## 隐私与安全边界
 
@@ -44,12 +44,15 @@ Qwen3-VL 医疗视觉语言模型微调与评测的公开工程实践仓库。�
 
 ```text
 code/                         数据构建、清洗、推理与评测代码
+code/standard_eval/           13项统一评测的可复用组件
 configs/full_sft/             全量微调配置模板
 configs/eval/                 评测配置示例
 experiments/lora_freezing/    LoRA冻结消融及参数审计
 examples/                     仅含人工合成示例
 docs/                         实验、指标、复现、隐私与发布文档
 tools/privacy_audit.ps1       隐私与敏感文件门禁
+tools/privacy_audit_history.py 完整Git历史敏感信息扫描
+tools/create_private_archive.ps1 仓库外AES-256加密归档
 tools/update_release_hashes.ps1  生成公开文件SHA-256清单
 ```
 
@@ -63,6 +66,7 @@ tools/update_release_hashes.ps1  生成公开文件SHA-256清单
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\privacy_audit.ps1
+python .\tools\privacy_audit_history.py
 ```
 
 6. 运行配置，例如：
@@ -92,13 +96,15 @@ git diff --exit-code -- RELEASE_SHA256.txt
 
 哈希只能证明文件内容是否变化，不能提供保密性，也不能证明临床数据已经匿名化。
 
+私有训练产物不得进入 Git，包括加密后的产物。确需在批准环境间离线转移时，可在仓库外运行 `tools/create_private_archive.ps1` 创建带文件名加密的 AES-256 归档；密钥必须独立管理。
+
 ## 临床使用警告
 
 本仓库仅用于研究与工程复现，不是医疗器械。公开结论不能证明模型的临床安全性或诊断性能。任何临床使用前均须经过独立病理专家复核、机构审批、适用场景验证和持续监测。
 
 ---
 
-## 本批新增（2026-08-14，已脱敏）
+## 本批新增（2026-08-22，已脱敏）
 
 从本地训练成果中整理并**脱敏**后补充的可复用工程资产（不含任何权重、训练数据、逐样本结果、内部主机名或凭据）：
 
@@ -109,5 +115,9 @@ git diff --exit-code -- RELEASE_SHA256.txt
 - `docs/ENVIRONMENT.md`、`docs/environment_config.csv`、`docs/environment_snapshot.md`：环境与硬件快照（已隐去云厂商名）。
 - `docs/metrics/`：指标定义、冻结消融拆分空表模板与分析说明。
 - `docs/CONFIG_PREFLIGHT.md`：各 YAML / DeepSpeed JSON 的**预制要求**与训练前检查清单。
+- `docs/RUN_LEDGER.md`：R01–R14 的方法、完成状态、方向性结论和跨阶段比较边界。
+- `docs/STANDARD_EVALUATION.md`：13 项统一评测协议，以及当前病例级归因与下一阶段空间热图归档的边界。
+- `tools/privacy_audit_history.py`：扫描所有可达 Git blob，防止当前树安全但历史仍残留敏感信息。
+- `tools/create_private_archive.ps1`：只用于 Git 仓库外、经授权的 AES-256 加密归档与完整性校验。
 
 > 所有路径均为占位符；训练/数据/凭据均在仓库之外管理，详见 `SECURITY.md` 与 `docs/CONFIG_PREFLIGHT.md`。

@@ -12,6 +12,9 @@ jobs:
       - name: Privacy gate
         shell: pwsh
         run: ./tools/privacy_audit.ps1
+      - name: Reachable Git history privacy gate
+        shell: pwsh
+        run: python tools/privacy_audit_history.py
       - name: Python syntax
         shell: pwsh
         run: python -m compileall -q code experiments

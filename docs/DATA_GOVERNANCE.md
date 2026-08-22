@@ -18,12 +18,15 @@ For an authorized offline transfer, an institution-approved tool may create an A
 
 The command prompts for a passphrase. Never place the passphrase in a command, script, environment file, Git commit or chat. Verify the archive can be decrypted in the approved destination before deleting any source. Do not upload the encrypted archive to this repository.
 
+The repository also provides `tools/create_private_archive.ps1`, which refuses to write the archive inside the repository, prompts for the passphrase through 7-Zip, verifies decryption integrity, and writes a separate SHA-256 sidecar. It does not authorize transfer or replace institutional approval.
+
 ## Required release gate
 
 Before every push:
 
 1. Build from an explicit allowlist, not by copying the private project tree.
 2. Run `tools/privacy_audit.ps1`.
-3. Review `git diff --cached` and `git status` manually.
-4. Confirm no large files or Git LFS objects are present.
-5. Confirm Git history contains only sanitized commits.
+3. Run `python tools/privacy_audit_history.py`.
+4. Review `git diff --cached` and `git status` manually.
+5. Confirm no large files or Git LFS objects are present.
+6. Confirm Git history contains only sanitized commits.

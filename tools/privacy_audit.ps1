@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).ProviderPath
 Push-Location $repoRoot
 try {
     $listed = & git ls-files --cached --others --exclude-standard
@@ -8,6 +8,12 @@ try {
 
     $files = @($listed | Where-Object { $_ -and -not $_.StartsWith('.git/') })
     $errors = New-Object System.Collections.Generic.List[string]
+    $allowedDataTemplates = @(
+        'docs/environment_config.csv',
+        'docs/metrics/metric_dictionary.csv',
+        'docs/metrics/r04_r07_pareto_template.csv',
+        'docs/metrics/r04_r07_split_template.csv'
+    )
 
     $blockedExtensions = @(
         '.safetensors', '.bin', '.pt', '.pth', '.ckpt', '.onnx',
@@ -16,19 +22,26 @@ try {
         '.xls', '.parquet', '.zip', '.7z', '.rar', '.tar', '.gz',
         '.gpg', '.age', '.pem', '.key'
     )
-    $textExtensions = @('.py', '.ps1', '.sh', '.yaml', '.yml', '.json', '.md', '.txt')
+    $textExtensions = @(
+        '.py', '.ps1', '.sh', '.yaml', '.yml', '.json', '.md', '.txt',
+        '.csv', '.tsv', '.toml', '.ini', '.cfg', '.in', '.jinja', '.xml', '.svg'
+    )
     $maxBytes = 5MB
 
     $privateKeyPattern = 'BEGIN' + '[ A-Z]*PRIVATE KEY'
-    $internalMountPattern = '/course' + '558'
-    $cloudHostPattern = 'px-' + 'cloud'
+    $internalMountPattern = '/course' + '[0-9]{2,}'
+    $cloudHostPattern = 'px-' + 'cloud[0-9]*'
     $providerPattern = 'mat' + 'pool'
     $rootEndpointPattern = 'root' + '@'
     $windowsUserPattern = '[A-Za-z]:' + '\\Users\\'
+    $openAiKeyPattern = 's' + 'k-(?:proj-|svcacct-)?[A-Za-z0-9_-]{16,}'
+    $credentialUrlPattern = 'https?://[^\s/:]+:[^\s/@]+@'
     $patterns = @(
         $privateKeyPattern,
         'gh[opusr]_[A-Za-z0-9_]{20,}',
         'AKIA[0-9A-Z]{16}',
+        $openAiKeyPattern,
+        $credentialUrlPattern,
         $internalMountPattern,
         $cloudHostPattern,
         $providerPattern,
@@ -40,11 +53,15 @@ try {
     )
 
     foreach ($relative in $files) {
+        if ($relative.Contains('\')) {
+            $errors.Add("non-portable backslash in Git path: $relative")
+        }
         $path = Join-Path $repoRoot $relative
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
         $item = Get-Item -LiteralPath $path
         $extension = $item.Extension.ToLowerInvariant()
-        if ($blockedExtensions -contains $extension) {
+        $normalizedRelative = $relative.Replace('\', '/')
+        if (($blockedExtensions -contains $extension) -and ($allowedDataTemplates -notcontains $normalizedRelative)) {
             $errors.Add("blocked extension: $relative")
         }
         if ($item.Length -gt $maxBytes) {
