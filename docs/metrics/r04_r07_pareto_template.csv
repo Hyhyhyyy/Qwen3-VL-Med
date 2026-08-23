@@ -1,0 +1,5 @@
+run,status,trainable_parameters,training_minutes,formal_peak_gpu_memory_mib,mean_inference_latency_sec,diagnosis_concept_f1,clinical_fact_f1,key_fact_recall,notes
+R04,complete,187408896,154.53,,,,,,all-components LoRA
+R05,complete,159392256,139.30,,,,,,freeze vision
+R06,complete,160137216,154.32,,,,,,freeze projector
+R07,complete,55288320,,,,,,,freeze language; private paired results are not included

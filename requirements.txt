@@ -1,0 +1,10 @@
+numpy
+pillow
+pyyaml
+safetensors
+sacrebleu==2.5.1
+rouge-score==0.1.2
+bert-score==0.3.13
+
+# Install PyTorch, Transformers, PEFT and LLaMA-Factory separately using
+# versions appropriate for the target CUDA environment.

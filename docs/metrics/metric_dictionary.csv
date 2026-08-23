@@ -1,0 +1,12 @@
+metric_name,display_name,level,direction,unit,applicable_task,proxy_flag,definition,major_limitation
+diagnosis_concept_micro_f1,诊断概念Micro-F1,case,higher,ratio,n2one,false,病例诊断概念的全局精确率召回率调和平均,受概念词典覆盖影响
+diagnosis_concept_macro_f1_supported,诊断概念Macro-F1,diagnosis_class,higher,ratio,n2one,false,有支持诊断类别F1的宏平均,罕见类方差大
+clinical_fact_f1,Clinical Fact F1代理,case,higher,ratio,all,true,规则提取临床事实集合F1,非图像落地专家评价
+hallucinated_fact_rate,幻觉事实率代理,case,lower,ratio,all,true,预测事实中参考答案未支持的比例,参考答案可能不完备
+omission_rate,遗漏率代理,case,lower,ratio,all,true,参考事实未被预测覆盖的比例,规则抽取误差
+clinical_discordance_rate,临床不一致率代理,case,lower,ratio,all,true,预测与参考事实冲突比例,需专家复核
+negation_flip_rate,否定翻转率,case,lower,ratio,all,true,病例中否定极性翻转比例,否定规则覆盖有限
+rougeL_f1,ROUGE-L F1,text,higher,ratio,all,false,最长公共子序列F1,可能奖励模板相似
+bertscore_f1,BERTScore F1,text,higher,ratio,all,false,中文编码器语义相似度,非病理专用编码器
+latency_sec,推理时延,case,lower,seconds,all,false,每例端到端生成耗时,受硬件和并发影响
+

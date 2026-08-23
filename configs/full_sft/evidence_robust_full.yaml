@@ -1,0 +1,38 @@
+# R15-style evidence-robust diagnosis training. The paired dataset contains one
+# Oracle-evidence and one generated-evidence record per private training case.
+# Use 1.5 epochs when this exactly matches the update exposure of a 3-epoch
+# Oracle-only baseline; recalculate this value for other mixture ratios.
+model_name_or_path: /path/to/Qwen3-VL-4B-Instruct
+template: qwen3_vl_nothink
+stage: sft
+do_train: true
+finetuning_type: full
+freeze_vision_tower: true
+freeze_multi_modal_projector: true
+freeze_language_model: false
+
+dataset_dir: /path/to/private/dataset_registry
+dataset: private_robust_evidence_mix
+cutoff_len: 8192
+preprocessing_num_workers: 4
+preprocessing_batch_size: 8
+
+output_dir: ./outputs/evidence_robust_full
+logging_steps: 5
+save_steps: 800
+save_total_limit: 1
+plot_loss: true
+overwrite_output_dir: false
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 2
+learning_rate: 1.0e-5
+num_train_epochs: 1.5
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+bf16: true
+gradient_checkpointing: true
+flash_attn: sdpa
+ddp_find_unused_parameters: false
+report_to: none
+seed: 42
+deepspeed: configs/ds_a100_z3_nooffload.json

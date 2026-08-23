@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Token-visual interpretability manifest",
+  "type": "object",
+  "required": ["schema_version", "run_id", "case_uid", "comparison_group", "target_span_id", "target_text", "target_token_ids", "decoder_layer", "attention_heads", "npz_sha256", "arrays", "images", "qc"],
+  "properties": {
+    "schema_version": {"const": "phase4-interpretability-v1"},
+    "run_id": {"type": "string"},
+    "case_uid": {"type": "string"},
+    "comparison_group": {"type": "string"},
+    "target_span_id": {"type": "string"},
+    "target_text": {"type": "string"},
+    "target_token_ids": {"type": "array", "items": {"type": "integer"}},
+    "decoder_layer": {"type": "integer"},
+    "attention_heads": {"type": "array", "minItems": 1, "items": {"type": "integer"}, "uniqueItems": true},
+    "npz_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "arrays": {"type": "object"},
+    "images": {"type": "array"},
+    "qc": {
+      "type": "object",
+      "required": ["has_nan", "has_inf", "shape_match", "token_mapping_complete", "spatial_mapping_complete"]
+    }
+  }
+}

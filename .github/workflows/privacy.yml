@@ -1,0 +1,38 @@
+name: privacy-and-syntax
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Privacy gate
+        shell: pwsh
+        run: ./tools/privacy_audit.ps1
+      - name: Reachable Git history privacy gate
+        shell: pwsh
+        run: python tools/privacy_audit_history.py
+      - name: Single-contributor commit metadata gate
+        shell: pwsh
+        run: python tools/privacy_audit_commit_metadata.py --expected-name Hyhyhyyy --expected-email 235096668+Hyhyhyyy@users.noreply.github.com
+      - name: Python syntax
+        shell: pwsh
+        run: python -m compileall -q code experiments scripts tools
+      - name: Install lightweight test dependency
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check numpy pillow
+      - name: Unit tests
+        shell: pwsh
+        run: |
+          python code/metric_eval/tests/test_metric_rules.py
+          python code/one_to_one_eval/test_1v1_eval.py
+          python code/evidence_pipeline/test_build_robust_evidence_mix.py
+          python code/standard_eval/test_archive_interpretability.py
+      - name: Release hash integrity
+        shell: pwsh
+        run: |
+          ./tools/update_release_hashes.ps1
+          git diff --exit-code -- RELEASE_SHA256.txt

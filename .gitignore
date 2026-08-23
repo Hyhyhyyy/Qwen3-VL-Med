@@ -1,0 +1,72 @@
+# Clinical/private data: deny by default
+data/
+datasets/
+private/
+internal/
+clinical/
+images/
+artifacts/
+predictions/
+metrics/
+outputs/
+logs/
+checkpoints/
+
+# Models and adapters
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Medical/image formats
+*.dcm
+*.dicom
+*.svs
+*.ndpi
+*.mrxs
+*.tif
+*.tiff
+*.jpg
+*.jpeg
+*.png
+
+# Data exports and encrypted archives
+*.jsonl
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.gpg
+*.age
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*_known_hosts
+authorized_keys
+config.local.*
+
+# Python and tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

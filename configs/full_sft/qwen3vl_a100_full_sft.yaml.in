@@ -1,0 +1,58 @@
+### ============================================================
+###  Qwen3-VL-4B 全量微调（A100）— LLaMA-Factory 0.9.5
+###  路径由 apply_paths.sh 从 env.sh 自动生成，不要手动编辑本文件
+### ============================================================
+
+### --- model ---
+model_name_or_path: {{TRAIN_ROOT}}/models/Qwen3-VL-4B-Instruct
+template: qwen3_vl                  # Qwen3-VL 多模态模板（缺它会导致 "model does not support image input"）
+
+### --- method: 全量微调（不是 LoRA）---
+stage: sft
+do_train: true
+finetuning_type: full
+freeze_vision_tower: false
+freeze_multi_modal_projector: false
+freeze_language_model: false
+# 全量微调：不要写 lora_target / lora_rank 等 LoRA 字段
+
+### --- dataset ---
+dataset_dir: {{DATA_DIR}}
+dataset: wsi_train
+# eval_dataset: wsi_test        # 建好测试集后取消注释
+cutoff_len: 8192               # 全量微调显存更紧，先用 8192；A100-80G 充裕可试 16384
+# ===== 关键四件套（消除 image-token mismatch）=====
+image_max_pixels: 262144       # 512^2；与 min 保持一致
+image_min_pixels: 262144       # 关键：min == max，消除 smart_resize 取整错位
+# 注意：不要出现 image_max_token_num 这一行
+preprocessing_num_workers: 4   # 仍卡则降到 1
+preprocessing_batch_size: 8     # 关键：batched=True 时 batch 绝不能大，5000 会卡死 0/N；8 已验证安全（慢但稳）
+
+### --- output ---
+output_dir: {{TRAIN_ROOT}}/output/full_sft
+logging_steps: 5
+save_steps: 200
+save_total_limit: 3
+plot_loss: true
+overwrite_output_dir: false
+resume_from_checkpoint: null   # 首次从头训练；中断续训时显式改为 true 或 checkpoint 路径
+
+### --- train ---
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 2   # 4 卡全局有效 batch = 1 × 2 × 4 = 8
+learning_rate: 1.0e-5            # 全量微调 LR 比 LoRA 小（LoRA 常 2e-4）
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+bf16: true
+gradient_checkpointing: true    # 全量微调必须开，省显存
+# transformers 5.6.0 + Qwen3-VL may pass s_aux=None into the FA2 integration.
+# SDPA is stable for this model/version combination and avoids that crash.
+flash_attn: sdpa
+ddp_find_unused_parameters: false
+report_to: none
+
+### --- deepspeed ---
+# 单卡 A100-80G 用 ZeRO-2（configs/ds_a100_z2.json）
+# 多卡 A100 用 ZeRO-3 无 offload（configs/ds_a100_z3.json）
+deepspeed: {{DEEPSPEED}}
