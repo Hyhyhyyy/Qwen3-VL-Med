@@ -55,10 +55,20 @@ def main() -> int:
                 findings.append(f"unexpected author identity: {short}")
             if committer_name != args.expected_name or committer_email != args.expected_email:
                 findings.append(f"unexpected committer identity: {short}")
+        author_metadata = (
+            author_name
+            if author_email.lower().endswith("@users.noreply.github.com")
+            else f"{author_name} {author_email}"
+        )
+        committer_metadata = (
+            committer_name
+            if committer_email.lower().endswith("@users.noreply.github.com")
+            else f"{committer_name} {committer_email}"
+        )
         for rule, regex in message_patterns:
             for field_name, value in (
-                ("author metadata", f"{author_name} {author_email}"),
-                ("committer metadata", f"{committer_name} {committer_email}"),
+                ("author metadata", author_metadata),
+                ("committer metadata", committer_metadata),
                 ("commit message", message),
             ):
                 if regex.search(value):
