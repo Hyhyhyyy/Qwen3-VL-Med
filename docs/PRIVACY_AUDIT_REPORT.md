@@ -1,5 +1,13 @@
 # Public release privacy audit
 
+## 2026-08-25 release update
+
+- Current tree and every reachable Git blob are scanned independently.
+- Model/adapter formats, NumPy matrices, medical images, archives and files over the release size limit are denied.
+- Git LFS pointer text is denied, so a private weight cannot be represented indirectly by a public pointer.
+- Commit author and committer must both match the maintainer GitHub noreply identity; co-author trailers are rejected.
+- Phase 4 additions contain only templates, aggregate metrics and synthetic unit tests. No model artifact, clinical record, per-case prediction, private path or infrastructure endpoint is included.
+
 Audit date: 2026-08-14
 
 ## Release construction

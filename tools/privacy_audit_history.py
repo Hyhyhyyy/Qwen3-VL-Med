@@ -11,6 +11,19 @@ from pathlib import Path, PurePosixPath
 
 
 MAX_BLOB_BYTES = 5 * 1024 * 1024
+BLOCKED_SUFFIXES = {
+    ".safetensors", ".bin", ".pt", ".pth", ".ckpt", ".onnx", ".gguf",
+    ".h5", ".hdf5", ".npz", ".npy", ".dcm", ".dicom", ".svs",
+    ".ndpi", ".mrxs", ".tif", ".tiff", ".jpg", ".jpeg", ".png",
+    ".parquet", ".zip", ".7z", ".rar", ".tar", ".gz", ".zst", ".xz",
+    ".bz2", ".gpg", ".age", ".pem", ".key",
+}
+ALLOWED_HISTORICAL_DATA_FILES = {
+    "docs/environment_config.csv",
+    "docs/metrics/metric_dictionary.csv",
+    "docs/metrics/r04_r07_pareto_template.csv",
+    "docs/metrics/r04_r07_split_template.csv",
+}
 
 
 def git(*args: str) -> bytes:
@@ -44,6 +57,7 @@ def patterns() -> list[tuple[str, re.Pattern[str]]]:
         ("windows-user-path", re.compile(r"[A-Za-z]:\\Users\\", re.IGNORECASE)),
         ("legacy-private-count", re.compile(legacy_private_counts)),
         ("disclosed-data-scale", re.compile(disclosed_data_scale)),
+        ("git-lfs-pointer", re.compile(r"version\s+https://git-lfs\.github\.com/spec/v1")),
         ("phone-number", re.compile(r"\b1[3-9][0-9]{9}\b")),
         ("national-id", re.compile(r"\b[0-9]{17}[0-9Xx]\b")),
         (
@@ -86,6 +100,11 @@ def main() -> int:
             continue
         size = int(git("cat-file", "-s", oid).decode())
         label = sorted(paths)[0]
+        normalized_paths = {path.replace("\\", "/") for path in paths}
+        for path in normalized_paths:
+            suffix = PurePosixPath(path).suffix.lower()
+            if suffix in BLOCKED_SUFFIXES and path not in ALLOWED_HISTORICAL_DATA_FILES:
+                findings.append(f"blocked historical file type: {path} ({oid[:12]})")
         if size > MAX_BLOB_BYTES:
             findings.append(f"oversized historical blob: {label} ({size} bytes, {oid[:12]})")
             continue

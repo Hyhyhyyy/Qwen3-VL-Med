@@ -11,6 +11,9 @@ metrics/
 outputs/
 logs/
 checkpoints/
+adapters/
+weights/
+model_weights/
 
 # Models and adapters
 *.safetensors
@@ -19,6 +22,11 @@ checkpoints/
 *.pth
 *.ckpt
 *.onnx
+*.gguf
+*.h5
+*.hdf5
+*.npz
+*.npy
 
 # Medical/image formats
 *.dcm
@@ -44,6 +52,9 @@ checkpoints/
 *.rar
 *.tar
 *.gz
+*.zst
+*.xz
+*.bz2
 *.gpg
 *.age
 

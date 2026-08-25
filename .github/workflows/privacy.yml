@@ -30,6 +30,7 @@ jobs:
           python code/metric_eval/tests/test_metric_rules.py
           python code/one_to_one_eval/test_1v1_eval.py
           python code/evidence_pipeline/test_build_robust_evidence_mix.py
+          python code/joint_report/test_joint_report.py
           python code/standard_eval/test_archive_interpretability.py
       - name: Release hash integrity
         shell: pwsh

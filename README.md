@@ -15,7 +15,7 @@ Qwen3-VL 医疗视觉语言模型微调与评测的公开工程实践仓库。�
 
 维护者：**Hyhyhyyy**
 
-> **最近更新（2026-08-23，已脱敏）：** 完成R01–R15阶段台账与Phase 3聚合结果；公开R10视觉冻结、R15证据鲁棒训练模板、Oracle/Pipeline报告协议、text-only评测修复，以及Phase 4完整token—视觉token解释性归档工具与规范。
+> **最近更新（2026-08-25，已脱敏）：** 完成R01–R18实验台账与Phase 4汇总；公开单模型多图联合结构化报告构建器、确定性renderer、R16/R17/R18训练模板，以及更严格的权重、Git LFS、医疗数据和提交历史门禁。
 
 ## 工程成果概览
 
@@ -26,9 +26,10 @@ Qwen3-VL 医疗视觉语言模型微调与评测的公开工程实践仓库。�
 - 记录并处理了注意力实现兼容、显存约束、分布式训练、checkpoint保存与重载等工程问题。
 - 验证了Oracle/生成证据混合训练可以显著改善真实级联诊断，并公开可复用的数据混合构建器。
 - 将解释性归档升级为float16 NPZ、逐head矩阵、视觉token空间映射、manifest和论文热图的可执行协议。
+- 完成“完整报告Full基线—冻结视觉塔—R06式LoRA复现—联合结构化监督”的受控验证链，并明确区分点估计、置信区间和未执行显著性检验。
 - 为公开发布设置了文件类型、文件大小、敏感模式、语法、测试与 SHA-256 完整性门禁。
 
-公开结论及证据边界见[公开成果与经验](docs/PUBLIC_RESULTS.md)，聚合结果见[Phase 3聚合结果](docs/AGGREGATE_RESULTS.md)，逐Run状态见[R01–R15实验台账](docs/RUN_LEDGER.md)，统一协议见[13项评测机制](docs/STANDARD_EVALUATION.md)，下一阶段见[Phase 4计划](docs/PHASE4_PLAN.md)。
+公开结论及证据边界见[公开成果与经验](docs/PUBLIC_RESULTS.md)，聚合结果见[Phase 3/4聚合结果](docs/AGGREGATE_RESULTS.md)，逐Run状态见[R01–R18实验台账](docs/RUN_LEDGER.md)，统一协议见[13项评测机制](docs/STANDARD_EVALUATION.md)，Phase 4实际设计见[Phase 4记录](docs/PHASE4_PLAN.md)。
 
 ## 隐私与安全边界
 
@@ -48,6 +49,7 @@ Qwen3-VL 医疗视觉语言模型微调与评测的公开工程实践仓库。�
 code/                         数据构建、清洗、推理与评测代码
 code/standard_eval/           13项统一评测的可复用组件
 code/evidence_pipeline/       Oracle/生成证据鲁棒混合数据构建
+code/joint_report/            多图联合结构化目标构建、校验与renderer
 configs/full_sft/             全量微调配置模板
 configs/eval/                 评测配置示例
 experiments/lora_freezing/    LoRA冻结消融及参数审计
@@ -90,6 +92,7 @@ FORCE_TORCHRUN=1 llamafactory-cli train experiments/lora_freezing/lora_01_r04_al
 4. **Oracle和Pipeline回答不同问题。** Oracle是人工标准证据条件；Pipeline才是自动级联系统的现实输入，二者不得平均或择优合并。
 5. **Full与LoRA没有先验胜者。** 必须在相同数据、病例、任务、解码和临床评价下比较；训练成本只能在诊断安全不下降的候选间作为次级因素。
 6. **自动指标不是临床正确率。** BLEU、ROUGE、BERTScore及规则事实指标可用于回归与筛选，但医院使用前仍需病理医师盲评、外部验证和人机协同评价。
+7. **联合结构化监督可以改善产品可追溯性，但不自动解决校准。** R16获得更高严格诊断点估计和完整结构输出，同时ECE恶化；不能只凭单个点估计宣称临床优越。
 
 ## 完整性验证
 
@@ -125,7 +128,7 @@ git diff --exit-code -- RELEASE_SHA256.txt
 - `docs/ENVIRONMENT.md`、`docs/environment_config.csv`、`docs/environment_snapshot.md`：环境与硬件快照（已隐去云厂商名）。
 - `docs/metrics/`：指标定义、冻结消融拆分空表模板与分析说明。
 - `docs/CONFIG_PREFLIGHT.md`：各 YAML / DeepSpeed JSON 的**预制要求**与训练前检查清单。
-- `docs/RUN_LEDGER.md`：R01–R15 的方法、完成状态、方向性结论和跨阶段比较边界。
+- `docs/RUN_LEDGER.md`：R01–R18 的方法、完成状态、方向性结论和跨阶段比较边界。
 - `docs/STANDARD_EVALUATION.md`：13 项统一评测协议，以及当前病例级归因与下一阶段空间热图归档的边界。
 - `tools/privacy_audit_history.py`：扫描所有可达 Git blob，防止当前树安全但历史仍残留敏感信息。
 - `tools/create_private_archive.ps1`：只用于 Git 仓库外、经授权的 AES-256 加密归档与完整性校验。
@@ -142,3 +145,13 @@ git diff --exit-code -- RELEASE_SHA256.txt
 - `docs/AGGREGATE_RESULTS.md`、`ORACLE_PIPELINE_PROTOCOL.md`、`PHASE4_PLAN.md`和`INTERPRETABILITY_ARCHIVE.md`。
 
 所有新增示例均为合成或schema级内容，不包含临床样本、逐病例结果、内部路径、服务器信息或权重。
+
+## Phase 4最终增量（2026-08-25，已脱敏）
+
+- `code/joint_report/`：从私有病例级报告和有序逐图证据构建单模型联合JSON目标，并进行事实结构、图像顺序、split泄漏和renderer校验。
+- `configs/full_sft/joint_freeze_vision.yaml`：R16公开模板，冻结视觉塔并全量更新projector与语言模型。
+- `configs/lora/r06_reproduction.yaml`：R17公开模板，在严格清洗完整报告任务上复现R06式视觉/语言LoRA与projector冻结策略。
+- `configs/lora/joint_projector_frozen.yaml`：R18公开模板，在R16联合目标上使用R17/R06式LoRA策略。
+- 隐私门禁新增Git LFS指针、GGUF、NumPy矩阵、压缩权重容器和weight-like文件名扫描；Git历史与提交元数据继续只允许维护者GitHub noreply身份。
+
+公开结果只包含Run级聚合值。仓库不提供任何权重或adapter下载，也不会接受权重相关Issue附件、Release资产或Git LFS对象。

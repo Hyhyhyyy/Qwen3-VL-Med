@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 from privacy_audit_history import patterns
 
@@ -28,6 +30,9 @@ def main() -> int:
     parser.add_argument("--expected-name", required=True)
     parser.add_argument("--expected-email", required=True)
     args = parser.parse_args()
+
+    repo = Path(__file__).resolve().parent.parent
+    os.chdir(repo)
 
     commits = [line for line in git_text("rev-list", "--all").splitlines() if line]
     findings: list[str] = []
