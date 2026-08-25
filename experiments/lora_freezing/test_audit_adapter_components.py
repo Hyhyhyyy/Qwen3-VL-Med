@@ -8,8 +8,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import torch
-from safetensors.torch import save_file
+import numpy as np
+from safetensors.numpy import save_file
 
 
 ROOT = Path(__file__).resolve().parent
@@ -20,7 +20,7 @@ class AdapterComponentAuditTest(unittest.TestCase):
     def run_audit(self, run_id: str, keys: list[str]) -> subprocess.CompletedProcess[str]:
         with tempfile.TemporaryDirectory() as temp_dir:
             adapter_dir = Path(temp_dir)
-            tensors = {key: torch.zeros(1) for key in keys}
+            tensors = {key: np.zeros((1,), dtype=np.float32) for key in keys}
             save_file(tensors, adapter_dir / "adapter_model.safetensors")
             return subprocess.run(
                 [sys.executable, str(SCRIPT), "--run-id", run_id, "--adapter-dir", str(adapter_dir)],

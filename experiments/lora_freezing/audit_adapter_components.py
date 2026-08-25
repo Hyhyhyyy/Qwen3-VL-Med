@@ -28,7 +28,7 @@ def main() -> None:
     if not adapter_path.is_file():
         raise FileNotFoundError(adapter_path)
 
-    with safe_open(adapter_path, framework="pt", device="cpu") as handle:
+    with safe_open(adapter_path, framework="np", device="cpu") as handle:
         keys = list(handle.keys())
         parameter_count = sum(math.prod(handle.get_slice(key).get_shape()) for key in keys)
 

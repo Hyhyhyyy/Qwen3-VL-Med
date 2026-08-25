@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Research and protocol questions
+    url: https://github.com/Hyhyhyyy/Qwen3-VL-Med/discussions
+    about: Ask non-sensitive questions and propose research directions.
+  - name: Security and privacy reports
+    url: https://github.com/Hyhyhyyy/Qwen3-VL-Med/security/policy
+    about: Report sensitive problems privately.
