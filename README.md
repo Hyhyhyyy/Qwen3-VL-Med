@@ -57,7 +57,7 @@ examples/                     仅含人工合成示例
 docs/                         实验、指标、复现、隐私与发布文档
 tools/privacy_audit.ps1       隐私与敏感文件门禁
 tools/privacy_audit_history.py 完整Git历史敏感信息扫描
-tools/privacy_audit_commit_metadata.py 单一贡献者与提交元数据门禁
+tools/privacy_audit_commit_metadata.py 提交元数据隐私门禁（允许外部贡献）
 tools/create_private_archive.ps1 仓库外AES-256加密归档
 tools/update_release_hashes.ps1  生成公开文件SHA-256清单
 ```
@@ -73,7 +73,7 @@ tools/update_release_hashes.ps1  生成公开文件SHA-256清单
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\privacy_audit.ps1
 python .\tools\privacy_audit_history.py
-python .\tools\privacy_audit_commit_metadata.py --expected-name Hyhyhyyy --expected-email 235096668+Hyhyhyyy@users.noreply.github.com
+python .\tools\privacy_audit_commit_metadata.py
 ```
 
 6. 运行配置，例如：
@@ -83,6 +83,13 @@ FORCE_TORCHRUN=1 llamafactory-cli train experiments/lora_freezing/lora_01_r04_al
 ```
 
 完整复现顺序见 [复现与核验](docs/REPRODUCIBILITY.md)。
+
+## 参与和项目方向
+
+欢迎改进合成复现、评测代码、隐私门禁和协议文档。提交前请阅读
+[贡献指南](CONTRIBUTING.md)；研究设计问题请使用 GitHub Discussions，可复现缺陷请使用
+Issue。路线与明确的稳定标准见 [ROADMAP.md](ROADMAP.md)，支持边界见
+[SUPPORT.md](SUPPORT.md)。任何公开讨论都不得包含临床数据、逐病例输出、权重或内部信息。
 
 ## 关键工程认识
 
@@ -152,6 +159,6 @@ git diff --exit-code -- RELEASE_SHA256.txt
 - `configs/full_sft/joint_freeze_vision.yaml`：R16公开模板，冻结视觉塔并全量更新projector与语言模型。
 - `configs/lora/r06_reproduction.yaml`：R17公开模板，在严格清洗完整报告任务上复现R06式视觉/语言LoRA与projector冻结策略。
 - `configs/lora/joint_projector_frozen.yaml`：R18公开模板，在R16联合目标上使用R17/R06式LoRA策略。
-- 隐私门禁新增Git LFS指针、GGUF、NumPy矩阵、压缩权重容器和weight-like文件名扫描；Git历史与提交元数据继续只允许维护者GitHub noreply身份。
+- 隐私门禁新增Git LFS指针、GGUF、NumPy矩阵、压缩权重容器和weight-like文件名扫描；提交元数据会检查敏感模式，同时允许审计通过的外部贡献者参与。
 
 公开结果只包含Run级聚合值。仓库不提供任何权重或adapter下载，也不会接受权重相关Issue附件、Release资产或Git LFS对象。
